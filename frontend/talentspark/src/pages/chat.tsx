@@ -1,52 +1,65 @@
 import { useState } from "react";
-import api from "./Services/api";
-import type { ChatRequest, ChatResponse } from "./types/chat";
+import api from "../services/api";
+import type { ChatRequest, ChatResponse } from "../types/chat";
 
 function App() {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (!message.trim()) return;
+
     setLoading(true);
+    setError("");
+    setResponse("");
 
     const payload: ChatRequest = {
-      message,
+      message: message.trim(),
       session_id: "default",
     };
 
     try {
       const result = await api.post<ChatResponse>("/chat/ask-career", payload);
       setResponse(result.data.response);
+    } catch (err: any) {
+      setError(err?.response?.data?.detail || err.message || "Request failed");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main style={{ padding: 24, maxWidth: 600, margin: "0 auto" }}>
+    <main style={{ padding: 24, maxWidth: 700, margin: "0 auto" }}>
       <h1>Career Chat</h1>
 
       <form onSubmit={handleSubmit}>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          rows={4}
+          rows={5}
           placeholder="Ask career advice..."
           style={{ width: "100%", marginBottom: 12 }}
         />
 
-        <button type="submit" disabled={loading || !message}>
+        <button type="submit" disabled={loading || !message.trim()}>
           {loading ? "Sending..." : "Send"}
         </button>
       </form>
 
+      {error && (
+        <div style={{ color: "red", marginTop: 16 }}>
+          Error: {error}
+        </div>
+      )}
+
       {response && (
-        <div style={{ marginTop: 20, padding: 16, background: "#f3f3f3" }}>
+        <section style={{ marginTop: 24, padding: 16, background: "#f4f4f4" }}>
           <strong>Response:</strong>
           <p>{response}</p>
-        </div>
+        </section>
       )}
     </main>
   );

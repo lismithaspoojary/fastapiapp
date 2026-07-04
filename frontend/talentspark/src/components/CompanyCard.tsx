@@ -1,5 +1,5 @@
 import type {Company} from "../types/company";
-import { getCompany} from "../Services/CompanyService";
+import { getCompany} from "../services/CompanyService";
 import {useState} from "react";
 
 type Props = {
