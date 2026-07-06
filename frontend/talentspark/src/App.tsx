@@ -17,6 +17,11 @@ function App() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
 
+  function handleNavigate(page: "home" | "companies" | "chat" | "login" | "register") {
+    setCurrentPage(page);
+    setError(null);
+  }
+
   useEffect(() => {
     if (currentPage === "companies" && token) {
       fetchCompanies();
@@ -79,18 +84,16 @@ function App() {
   }
 
   function handleSwitchToLogin() {
-    setCurrentPage("login");
-    setError(null);
+    handleNavigate("login");
   }
 
   function handleSwitchToRegister() {
-    setCurrentPage("register");
-    setError(null);
+    handleNavigate("register");
   }
 
   if (currentPage === "login") {
     return (
-      <div style={{ padding: 24, maxWidth: 500, margin: "0 auto" }}>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, background: "linear-gradient(180deg, #5b6cf6 0%, #7469f9 45%, #8b5cf6 100%)" }}>
         <Login onLogin={handleLogin} onSwitchToRegister={handleSwitchToRegister} />
       </div>
     );
@@ -98,25 +101,25 @@ function App() {
 
   if (currentPage === "register") {
     return (
-      <div style={{ padding: 24, maxWidth: 500, margin: "0 auto" }}>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, background: "linear-gradient(180deg, #5b6cf6 0%, #7469f9 45%, #8b5cf6 100%)" }}>
         <Register onSwitchToLogin={handleSwitchToLogin} />
       </div>
     );
   }
 
   return (
-    <div>
-      <NavBar onNavigate={(page) => setCurrentPage(page as any)} />
+    <div style={{ background: "#eff6ff", minHeight: "100vh" }}>
+      <NavBar onNavigate={(page) => handleNavigate(page as "home" | "companies" | "chat" | "login" | "register")} />
 
-      <div style={{ margin: "24px auto", maxWidth: 1024, padding: "0 16px" }}>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
-          <button onClick={() => setCurrentPage("home")}>Home</button>
-          <button onClick={() => setCurrentPage("chat")}>Career Chat</button>
-          <button onClick={() => setCurrentPage("companies")}>Companies</button>
+      <div style={{ margin: "24px auto", maxWidth: 1024, padding: "24px 16px" }}>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, background: "#1d4ed8", padding: 16, borderRadius: 20, border: "1px solid #2563eb" }}>
+          <button onClick={() => handleNavigate("home")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Home</button>
+          <button onClick={() => handleNavigate("chat")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Career Chat</button>
+          <button onClick={() => handleNavigate("companies")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Companies</button>
           {token ? (
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleLogout} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Logout</button>
           ) : (
-            <button onClick={() => setCurrentPage("login")}>Login / Register</button>
+            <button onClick={() => handleNavigate("login")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Login / Register</button>
           )}
         </div>
 
@@ -154,7 +157,7 @@ function App() {
             ) : (
               <div>
                 <p>You must be logged in to view companies.</p>
-                <button onClick={() => setCurrentPage("login")}>Login</button>
+                <button onClick={() => handleNavigate("login")}>Login</button>
               </div>
             )}
           </div>

@@ -1,5 +1,4 @@
 import type {Company} from "../types/company";
-import { getCompany} from "../services/CompanyService";
 import {useState} from "react";
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 function CompanyCard({
     companies,onadd,onedit,ondelete}:Props){
     const [editCompanyId, setEditCompanyId] = useState<number | null>(null);
-    const [editcompany, setEditcompany] = useState<Company | null>(null);
     const [addform,setAddform] = useState<Company>({
         id:0,
         name:"",
@@ -41,22 +39,9 @@ function CompanyCard({
             jobs:[]
         })
     }
-    const handleEdit = (company:Company) => {
-        onedit(company);
-        setEditform({
-            id:company.id,
-            name:company.name,
-            email:company.email,
-            phone:company.phone,
-            location:company.location,
-            jobs:[]
-        })
-    }
-    const handleDelete = (id:number) => {
-        ondelete(id);
-    }
-    const handleSave = (id:number) => {
+    const handleSave = () => {
         onedit(editform);
+        setEditCompanyId(null);
         setEditform({
             id:0,
             name:"",
@@ -79,28 +64,29 @@ function CompanyCard({
     } 
 
     return(
-        <div>
+        <div style={{ display: "grid", gap: 12 }}>
             {companies.map((company) => (
-                <div key={company.id}>
+                <div key={company.id} style={{ padding: 16, border: "1px solid #e2e8f0", borderRadius: 12, background: "#f8fafc" }}>
                     {editCompanyId === company.id ? (
                         <>
                     <input type="text" value={editform.name} onChange={(e)=>setEditform({...editform,name:e.target.value})} placeholder={company.name} />
                     <input type="text" value={editform.email} onChange={(e)=>setEditform({...editform,email:e.target.value})} placeholder={company.email} />
                     <input type="text" value={editform.phone} onChange={(e)=>setEditform({...editform,phone:e.target.value})} placeholder={company.phone} />
                     <input type="text" value={editform.location} onChange={(e)=>setEditform({...editform,location:e.target.value})} placeholder={company.location} />
-                    <button onClick={() => handleSave(company.id)}>Save</button>
+                    <button onClick={handleSave}>Save</button>
                     <button onClick={handlecancel}>Cancel</button>
                     </>
                     ):
                     <>
-                    <h1>{company.name}</h1>
-                    <p>Email: {company.email}</p>
-                    <p>Phone: {company.phone}</p>
-                    <p>Location: {company.location}</p>
+                    <h1 style={{ color: "#111827", margin: 0 }}>{company.name}</h1>
+                    <p style={{ color: "#1f2937", margin: "6px 0 0" }}>Email: {company.email}</p>
+                    <p style={{ color: "#1f2937", margin: "4px 0 0" }}>Phone: {company.phone}</p>
+                    <p style={{ color: "#1f2937", margin: "4px 0 0" }}>Location: {company.location}</p>
                     </>}
-                    <button onClick={() => setEditCompanyId(company.id)}>Edit</button>
-                    <button onClick={() => ondelete(company.id)}>Delete</button>
-                    <hr></hr>
+                    <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                      <button onClick={() => setEditCompanyId(company.id)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer" }}>Edit</button>
+                      <button onClick={() => ondelete(company.id)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer" }}>Delete</button>
+                    </div>
                 </div>
             ))}
             <h2>Add Company</h2>
