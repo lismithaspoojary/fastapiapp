@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "../services/api";
 import type { ChatRequest, ChatResponse } from "../types/chat";
 
-function App() {
+function ChatPage() {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,39 +32,43 @@ function App() {
   }
 
   return (
-    <main style={{ padding: 24, maxWidth: 700, margin: "0 auto" }}>
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 20, padding: 24 }}>
-        <h1 style={{ color: "#1d4ed8" }}>Career Chat</h1>
+    <main className="chat-container">
+      <div className="chat-card">
+        <h1 className="chat-title">Career Chat</h1>
 
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={5}
-            placeholder="Ask career advice..."
-            style={{ width: "100%", marginBottom: 12 }}
-          />
+        <form onSubmit={handleSubmit} className="grid grid-cols-1" style={{ gap: 'var(--space-lg)' }}>
+          <div className="form-group">
+            <label className="form-label">Ask for career advice</label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={5}
+              placeholder="Ask anything about your career, jobs, or professional growth..."
+              className="form-input"
+              style={{ resize: 'vertical', minHeight: '120px' }}
+            />
+          </div>
 
-          <button type="submit" disabled={loading || !message.trim()}>
-            {loading ? "Sending..." : "Send"}
+          <button type="submit" disabled={loading || !message.trim()} className="btn btn-primary">
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>
 
       {error && (
-        <div style={{ color: "red", marginTop: 16 }}>
-          Error: {error}
+        <div className="error-message" style={{ marginTop: 'var(--space-lg)' }}>
+          <strong>Error:</strong> {error}
         </div>
       )}
 
       {response && (
-        <section style={{ marginTop: 24, padding: 16, background: "#f4f4f4" }}>
-          <strong>Response:</strong>
-          <p>{response}</p>
+        <section className="chat-response" style={{ marginTop: 'var(--space-xl)' }}>
+          <strong style={{ color: 'var(--primary-700)' }}>Response:</strong>
+          <p style={{ marginTop: 'var(--space-sm)', color: 'var(--text-primary)' }}>{response}</p>
         </section>
       )}
     </main>
   );
 }
 
-export default App;
+export default ChatPage;

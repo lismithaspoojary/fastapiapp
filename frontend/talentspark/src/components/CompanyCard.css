@@ -1,0 +1,145 @@
+﻿.company-card-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.company-card {
+  background: rgba(41, 40, 40, 0.96);
+  border: 1px solid rgba(53, 48, 53, 0.12);
+  border-radius: 24px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.company-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(31,182,255,0.45);
+  box-shadow: 0 18px 40px rgba(31,182,255,0.06), 0 14px 30px rgba(31,182,255,0.04);
+}
+
+.company-name {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.company-card p {
+  margin: 0.4rem 0;
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+.company-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.company-actions button,
+.btn {
+  min-width: 120px;
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+}
+
+.btn-secondary {
+  background: rgba(79, 70, 229, 0.12);
+  color: #c7d2fe;
+  border-color: rgba(79, 70, 229, 0.28);
+}
+
+.btn-danger {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.btn-sm {
+  min-width: 96px;
+  padding: 0.75rem 1rem;
+}
+
+.btn:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.12);
+}
+
+.edit-btn {
+  background: rgba(79, 70, 229, 0.12);
+  border-color: rgba(79, 70, 229, 0.28);
+  color: #c7d2fe;
+}
+
+.edit-btn:hover {
+  background: rgba(79, 70, 229, 0.24);
+}
+
+.delete-btn {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #fecaca;
+}
+
+.delete-btn:hover {
+  background: rgba(248, 113, 113, 0.2);
+}
+
+.new-company-card {
+  background: rgba(18, 27, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 24px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+}
+
+.new-company-card h3 {
+  margin: 0 0 1rem 0;
+  color: #eef2ff;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: rgba(79, 70, 229, 0.8);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+@media (max-width: 768px) {
+  .company-card-actions {
+    flex-direction: column;
+  }
+}
+
+/* Muted grey card for specific companies (e.g., LSEG) */
+.company-card.muted-card {
+  background: rgba(148, 163, 184, 0.06);
+  border-color: rgba(148, 163, 184, 0.14);
+  color: var(--text);
+}
+
+.company-card.muted-card .company-name {
+  color: rgba(15, 23, 42, 0.85);
+}

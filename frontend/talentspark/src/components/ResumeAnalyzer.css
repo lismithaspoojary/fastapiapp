@@ -1,0 +1,69 @@
+.resume-analyzer {
+  background: #e8f0fe;
+  border-radius: 12px;
+  box-shadow: 0 14px 40px rgba(0, 72, 255, 0.12);
+  padding: 22px;
+  margin: 18px 0;
+  border: 1px solid #c7d8ff;
+}
+
+.resume-analyzer-header h2 {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  color: #1d4ed8;
+}
+
+.resume-analyzer-header p {
+  margin: 0 0 18px;
+  color: #2563eb;
+}
+
+.resume-textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #93c5fd;
+  min-height: 240px;
+  padding: 14px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.97rem;
+  background: #ffffff;
+  color: #0b3d91;
+}
+
+.resume-textarea::placeholder {
+  color: #5b8cff;
+  opacity: 1;
+}
+.resume-analyzer-actions {
+  margin-top: 16px;
+}
+
+.resume-analyzer-actions .btn {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.resume-error {
+  margin-top: 14px;
+  color: #1d4ed8;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.resume-analysis-result {
+  margin-top: 20px;
+  background: #dbeafe;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #93c5fd;
+}
+
+.resume-analysis-result pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  color: #1e40af;
+}

@@ -1,0 +1,10 @@
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(56, 189, 248, 0.2);
+  color: var(--text);
+  background: rgba(7, 11, 23, 0.96);
+  border-radius: 0 0 24px 24px;
+}

@@ -11,12 +11,12 @@ export async function getJob(id: number): Promise<Job> {
     return response.data
 }
 
-export async function createJob(job: Job): Promise<Job> {
+export async function createJob(job: Omit<Job, "id">): Promise<Job> {
     const response = await api.post("/job/", job)
     return response.data
 }
 
-export async function updateJob(id: number, job: Job): Promise<Job> {
+export async function updateJob(id: number, job: Omit<Job, "id">): Promise<Job> {
     const response = await api.put(`/job/${id}`, job)
     return response.data
 }

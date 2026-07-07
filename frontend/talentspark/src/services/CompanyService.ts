@@ -1,5 +1,5 @@
 import api from "./api";
-import type {Company} from "../types/company";
+import type { Company, CompanyCreatePayload } from "../types/company";
 
 export async function getCompanies(): Promise<Company[]> {
     const response = await api.get("/company/");
@@ -11,7 +11,7 @@ export async function getCompany(id: number): Promise<Company> {
     return response.data;
 }
 
-export async function createCompany(company: Company): Promise<Company> {
+export async function createCompany(company: CompanyCreatePayload): Promise<Company> {
     const response = await api.post("/company/", company);
     return response.data;
 }

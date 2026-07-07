@@ -1,30 +1,26 @@
-type Props = {
-  onNavigate?: (page: string) => void;
-};
+import "./NavBar.css";
 
-function NavBar({ onNavigate }: Props) {
-  return (
-    <nav style={{ padding: 16, background: "#0f172a", color: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
-      <ul style={{ display: "flex", gap: 16, listStyle: "none", margin: 0, padding: 0, alignItems: "center" }}>
-        <li style={{ fontWeight: 700, marginRight: 8 }}>TalentSpark</li>
-        <li>
-          <button type="button" onClick={() => onNavigate?.("home")} style={{ color: "inherit", background: "transparent", border: "none", cursor: "pointer", fontSize: 15 }}>
-            Home
-          </button>
-        </li>
-        <li>
-          <button type="button" onClick={() => onNavigate?.("chat")} style={{ color: "inherit", background: "transparent", border: "none", cursor: "pointer", fontSize: 15 }}>
-            Career Chat
-          </button>
-        </li>
-        <li>
-          <button type="button" onClick={() => onNavigate?.("companies")} style={{ color: "inherit", background: "transparent", border: "none", cursor: "pointer", fontSize: 15 }}>
-            Companies
-          </button>
-        </li>
-      </ul>
-    </nav>
-  );
+type Props = {
+    onLogout?: () => void;
+}
+
+function NavBar({ onLogout }: Props) {
+    return (
+        <nav className="navbar">
+            <ul>
+                <li>Home</li>
+                <li>About</li>
+                <li>Contact</li>
+                {onLogout && (
+                    <li className="logout-item">
+                        <button className="logout-btn" onClick={onLogout}>
+                            Logout
+                        </button>
+                    </li>
+                )}
+            </ul>
+        </nav>
+    )
 }
 
 export default NavBar;

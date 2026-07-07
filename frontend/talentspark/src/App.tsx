@@ -1,203 +1,140 @@
-import { useEffect, useState } from "react";
 import NavBar from "./components/NavBar";
 import CompanyCard from "./components/CompanyCard";
-import JobCard from "./components/JobCard";
+import JobList from "./components/JobList";
+import ChatBox from "./components/chatbot";
 import Footer from "./components/Footer";
-import ChatPage from "./pages/chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ResumeAnalyzer from "./components/ResumeAnalyzer";
+import { useEffect, useState } from "react";
 import { getCompanies, updateCompany, deleteCompany, createCompany } from "./services/CompanyService";
-import { getUsers } from "./services/UserService";
-import type { Company } from "./types/company";
-import type { LoginResponse, UserResponse } from "./types/user";
+import type { Company, CompanyCreatePayload } from "./types/company";
+import type { LoginResponse } from "./types/user";
+import "./App.css";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "companies" | "chat" | "login" | "register">("home");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [users, setUsers] = useState<UserResponse[]>([]);
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [authenticated, setAuthenticated] = useState(Boolean(localStorage.getItem("token")));
+    const [showRegister, setShowRegister] = useState(false);
 
-  function handleNavigate(page: "home" | "companies" | "chat" | "login" | "register") {
-    setCurrentPage(page);
-    setError(null);
-  }
-
-  useEffect(() => {
-    if (currentPage === "companies" && token) {
-      fetchCompanies();
+    async function fetchCompanies() {
+        setLoading(true);
+        setError(null);
+        try {
+            const company = await getCompanies();
+            setCompanies(company);
+        } catch (err: any) {
+            if (err?.response?.status === 401) {
+                setAuthenticated(false);
+                setCompanies([]);
+                return;
+            }
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    if (currentPage === "home" && token) {
-      fetchUsers();
+    async function handleEdit(company: Company) {
+        try {
+            const updatedCompany = await updateCompany(company.id, company);
+            setCompanies((prevCompanies) => prevCompanies.map((c) => c.id === updatedCompany.id ? updatedCompany : c));
+        } catch (err) {
+            setError(err as Error);
+        }
     }
-  }, [currentPage, token]);
 
-  async function fetchCompanies() {
-    setLoading(true);
-    setError(null);
-    try {
-      const companies = await getCompanies();
-      setCompanies(companies);
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || error?.message || "Unable to load companies");
-    } finally {
-      setLoading(false);
+    async function handleDelete(id: number) {
+        try {
+            await deleteCompany(id);
+            setCompanies((prevCompanies) => prevCompanies.filter((c) => c.id !== id));
+        } catch (err) {
+            setError(err as Error);
+        }
     }
-  }
 
-  async function fetchUsers() {
-    setLoading(true);
-    setError(null);
-    try {
-      if (!token) return;
-      const users = await getUsers(token);
-      setUsers(users);
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || error?.message || "Unable to load users");
-    } finally {
-      setLoading(false);
+    async function handleAdd(company: CompanyCreatePayload) {
+        try {
+            const newCompany = await createCompany(company);
+            setCompanies((prevCompanies) => [...prevCompanies, newCompany]);
+            await fetchCompanies();
+        } catch (err) {
+            setError(err as Error);
+        }
     }
-  }
 
-  async function handleLogin(response: LoginResponse) {
-    localStorage.setItem("token", response.access_token);
-    setToken(response.access_token);
-    setCurrentPage("home");
-    setError(null);
-    await fetchUsers();
-  }
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    setToken(null);
-    setCompanies([]);
-    setCurrentPage("home");
-    setError(null);
-  }
-
-  async function handleEdit(company: Company) {
-    try {
-      const updatedCompany = await updateCompany(company.id, company);
-      setCompanies(companies.map((item) => (item.id === updatedCompany.id ? updatedCompany : item)));
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || error?.message || "Update failed");
+    const handleLogin = (response: LoginResponse) => {
+        localStorage.setItem("token", response.access_token);
+        setAuthenticated(true);
+        setShowRegister(false);
+        fetchCompanies();
     }
-  }
 
-  async function handleDelete(id: number) {
-    try {
-      await deleteCompany(id);
-      setCompanies(companies.filter((company) => company.id !== id));
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || error?.message || "Delete failed");
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        setAuthenticated(false);
+        setCompanies([]);
+        setError(null);
     }
-  }
 
-  async function handleAdd(company: Company) {
-    try {
-      const newCompany = await createCompany(company);
-      setCompanies([...companies, newCompany]);
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || error?.message || "Add failed");
-    }
-  }
+    const handleRegisterSuccess = () => {
+        setShowRegister(false);
+    };
 
-  function handleSwitchToLogin() {
-    handleNavigate("login");
-  }
+    useEffect(() => {
+        if (authenticated) {
+            fetchCompanies();
+        }
+    }, [authenticated]);
 
-  function handleSwitchToRegister() {
-    handleNavigate("register");
-  }
-
-  if (currentPage === "login") {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, background: "linear-gradient(180deg, #5b6cf6 0%, #7469f9 45%, #8b5cf6 100%)" }}>
-        <Login onLogin={handleLogin} onSwitchToRegister={handleSwitchToRegister} />
-      </div>
-    );
-  }
-
-  if (currentPage === "register") {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, background: "linear-gradient(180deg, #5b6cf6 0%, #7469f9 45%, #8b5cf6 100%)" }}>
-        <Register onSwitchToLogin={handleSwitchToLogin} />
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ background: "#eff6ff", minHeight: "100vh" }}>
-      <NavBar onNavigate={(page) => handleNavigate(page as "home" | "companies" | "chat" | "login" | "register")} />
-
-      <div style={{ margin: "24px auto", maxWidth: 1024, padding: "24px 16px" }}>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, background: "#1d4ed8", padding: 16, borderRadius: 20, border: "1px solid #2563eb" }}>
-          <button onClick={() => handleNavigate("home")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Home</button>
-          <button onClick={() => handleNavigate("chat")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Career Chat</button>
-          <button onClick={() => handleNavigate("companies")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Companies</button>
-          {token ? (
-            <button onClick={handleLogout} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Logout</button>
-          ) : (
-            <button onClick={() => handleNavigate("login")} style={{ padding: "10px 16px", borderRadius: 999, border: "1px solid transparent", background: "#2563eb", color: "#ffffff", cursor: "pointer", fontWeight: 700 }}>Login / Register</button>
-          )}
-        </div>
-
-        {error && (
-          <div style={{ color: "red", marginBottom: 16 }}>
-            <strong>Error:</strong> {error}
-          </div>
-        )}
-
-        {currentPage === "home" && (
-          <div>
-            <h1 style={{ color: "#1d4ed8" }}>Welcome to TalentSpark</h1>
-            <p style={{ color: "#2563eb" }}>Use the navigation above to chat, view companies, or log in.</p>
-            {token && (
-              <div style={{ marginBottom: 24, padding: 16, background: "#fff", borderRadius: 16, boxShadow: "0 1px 3px rgba(15, 23, 42, 0.08)" }}>
-                <h2 style={{ margin: 0, color: "#1e40af" }}>Logged-in Users</h2>
-                <ul style={{ marginTop: 12, paddingLeft: 20 }}>
-                  {users.map((user) => (
-                    <li key={user.id}>{user.name} ({user.email})</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <JobCard />
-          </div>
-        )}
-
-        {currentPage === "chat" && <ChatPage />}
-
-        {currentPage === "companies" && (
-          <div>
-            {token ? (
-              <>
-                {loading ? (
-                  <div>Loading companies...</div>
+    // Show login/register page if not authenticated
+    if (!authenticated) {
+        return (
+            <div className="auth-wrapper">
+                {showRegister ? (
+                    <Register onRegister={handleRegisterSuccess} onSwitchToLogin={() => setShowRegister(false)} />
                 ) : (
-                  <CompanyCard
+                    <Login onLogin={handleLogin} onSwitchToRegister={() => setShowRegister(true)} />
+                )}
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className="loading-state">
+                Loading...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="error-state">
+                Error: {error.message}
+            </div>
+        );
+    }
+
+    return (
+        <div className="app-layout">
+            <NavBar onLogout={handleLogout} />
+            <main className="main-container">
+                <CompanyCard
                     companies={companies}
                     onedit={handleEdit}
                     ondelete={handleDelete}
                     onadd={handleAdd}
-                  />
-                )}
-              </>
-            ) : (
-              <div>
-                <p>You must be logged in to view companies.</p>
-                <button onClick={() => handleNavigate("login")}>Login</button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <Footer />
-    </div>
-  );
+                />
+                <ResumeAnalyzer />
+                <JobList />
+                <ChatBox />
+            </main>
+            <Footer />
+        </div>
+    );
 }
 
 export default App;
