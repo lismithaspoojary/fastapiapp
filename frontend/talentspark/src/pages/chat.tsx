@@ -34,7 +34,7 @@ function App() {
   return (
     <main style={{ padding: 24, maxWidth: 700, margin: "0 auto" }}>
       <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 20, padding: 24 }}>
-        <h1>Career Chat</h1>
+        <h1 style={{ color: "#1d4ed8" }}>Career Chat</h1>
 
         <form onSubmit={handleSubmit}>
           <textarea

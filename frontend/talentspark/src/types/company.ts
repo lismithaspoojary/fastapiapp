@@ -6,7 +6,5 @@ interface Company{
     phone:string;
     location:string;
     jobs:Job[];
-
 }
-
 export type {Company}

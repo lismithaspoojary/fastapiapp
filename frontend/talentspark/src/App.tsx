@@ -7,14 +7,16 @@ import ChatPage from "./pages/chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { getCompanies, updateCompany, deleteCompany, createCompany } from "./services/CompanyService";
+import { getUsers } from "./services/UserService";
 import type { Company } from "./types/company";
-import type { LoginResponse } from "./types/user";
+import type { LoginResponse, UserResponse } from "./types/user";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "companies" | "chat" | "login" | "register">("home");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [users, setUsers] = useState<UserResponse[]>([]);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
 
   function handleNavigate(page: "home" | "companies" | "chat" | "login" | "register") {
@@ -25,6 +27,10 @@ function App() {
   useEffect(() => {
     if (currentPage === "companies" && token) {
       fetchCompanies();
+    }
+
+    if (currentPage === "home" && token) {
+      fetchUsers();
     }
   }, [currentPage, token]);
 
@@ -41,11 +47,26 @@ function App() {
     }
   }
 
-  function handleLogin(response: LoginResponse) {
+  async function fetchUsers() {
+    setLoading(true);
+    setError(null);
+    try {
+      if (!token) return;
+      const users = await getUsers(token);
+      setUsers(users);
+    } catch (error: any) {
+      setError(error?.response?.data?.detail || error?.message || "Unable to load users");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLogin(response: LoginResponse) {
     localStorage.setItem("token", response.access_token);
     setToken(response.access_token);
     setCurrentPage("home");
     setError(null);
+    await fetchUsers();
   }
 
   function handleLogout() {
@@ -131,8 +152,18 @@ function App() {
 
         {currentPage === "home" && (
           <div>
-            <h1>Welcome to TalentSpark</h1>
-            <p>Use the navigation above to chat, view companies, or log in.</p>
+            <h1 style={{ color: "#1d4ed8" }}>Welcome to TalentSpark</h1>
+            <p style={{ color: "#2563eb" }}>Use the navigation above to chat, view companies, or log in.</p>
+            {token && (
+              <div style={{ marginBottom: 24, padding: 16, background: "#fff", borderRadius: 16, boxShadow: "0 1px 3px rgba(15, 23, 42, 0.08)" }}>
+                <h2 style={{ margin: 0, color: "#1e40af" }}>Logged-in Users</h2>
+                <ul style={{ marginTop: 12, paddingLeft: 20 }}>
+                  {users.map((user) => (
+                    <li key={user.id}>{user.name} ({user.email})</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <JobCard />
           </div>
         )}
