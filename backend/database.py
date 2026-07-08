@@ -1,9 +1,9 @@
 import os
-from typing import Generator
+from SQlalchemy.ext.asyncio import create_async_engine, Async_Sessionmaker,AsyncSession
 
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import URL
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+load_dotenv()
 
 DB_USER = os.getenv("DB_USER", "postgres")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "lismitha@12345")

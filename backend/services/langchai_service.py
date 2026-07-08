@@ -41,8 +41,37 @@ try:
         return getattr(response, "content", str(response))
 
 except ModuleNotFoundError:
+    def _simple_career_bot(question: str) -> str:
+        q = question.lower().strip()
+        # Basic FAQ-style responses for common career questions
+        if "what is ai" in q or q.strip() == "what is ai":
+            return (
+                "AI (Artificial Intelligence) is the field of computer science that focuses on "
+                "building systems that can perform tasks that normally require human intelligence, "
+                "such as understanding language, recognizing images, and making decisions."
+            )
+        if "what is machine learning" in q or "machine learning" == q:
+            return (
+                "Machine Learning is a subset of AI that uses algorithms and statistical models "
+                "to enable computers to improve at tasks with experience (data)."
+            )
+        if "how to become" in q or "how do i become" in q:
+            return (
+                "Start by learning programming (Python/JavaScript), study data structures and algorithms, "
+                "build projects, and practice interviews; specialize in areas like web, data, or cloud depending on your goals."
+            )
+        if "interview" in q:
+            return (
+                "Practice coding problems, system design basics, and behavioral questions. Use mock interviews and review common patterns."
+            )
+        # fallback friendly reply
+        return (
+            "I don't have the full career assistant available right now, but here's a quick tip: "
+            + question
+        )
+
     def ask_career_chatbot_response(question: str, session_id: str = "default") -> str:
-        return f"[mock career reply] {question}"
+        return _simple_career_bot(question)
 
 except Exception as exc:
     def ask_career_chatbot_response(question: str, session_id: str = "default") -> str:

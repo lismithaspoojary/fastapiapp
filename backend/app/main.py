@@ -14,7 +14,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 #print(engine)
-
+@app.on_event("startup")
+async def on_startup():
+    from database import Base, engine
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        
 Base.metadata.create_all(bind=engine)
 
 app.include_router(company.router)

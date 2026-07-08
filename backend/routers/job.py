@@ -4,6 +4,7 @@ from models.job import Job
 from sqlalchemy.orm import Session
 from database import get_db
 from utils.oauth2 import role_required,get_current_user
+from sqlalchemy.orm import selectionload
 
 router = APIRouter(prefix="/job", tags=["job"])
 
@@ -26,6 +27,11 @@ def get_job(job_id: int,db:Session=Depends(get_db),current_user=Depends(get_curr
     if not job:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
     return job
+try
+    result=await db.execute(select(Job).filter(Job.id==job_id))
+    job=result.scalars().first()
+except Exception as e:
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Database error retrieving job: {str(e)}")
 
 @router.put("/{job_id}",status_code=status.HTTP_201_CREATED,response_model=JobResponse)
 def update_job(job_id: int, job: JobUpdate,db:Session=Depends(get_db),current_user=Depends(role_required(["admin","hr"]))):
